@@ -1,7 +1,8 @@
-package com.exam.board.model.post;
+package com.exam.board.model.reply;
 
 
-import com.exam.board.model.entity.PostEntity;
+import com.exam.board.model.entity.ReplyEntity;
+import com.exam.board.model.post.Post;
 import com.exam.board.model.user.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -9,83 +10,26 @@ import java.time.ZonedDateTime;
 
 //여기 값이 널이 아닌 것만
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public  record Post(Long postId,
-                    String body,
-                    User user,
-                    ZonedDateTime createdDateTime,
-                    ZonedDateTime updatedDateTime,
-                    ZonedDateTime deletedDateTime){
+public  record Reply(Long replyId,
+                     String body,
+                     User user,
 
-    public static Post from(PostEntity postEntity){
-        return new Post(postEntity.getPostId(), postEntity.getBody(), User.from(postEntity.getUser()), postEntity.getCreatedDateTime(),
-                postEntity.getUpdatedDateTime(),postEntity.getDeletedDateTime());
+                     Post post,
+
+                     ZonedDateTime createdDateTime,
+                     ZonedDateTime updatedDateTime,
+                     ZonedDateTime deletedDateTime
+
+                     //post와의 차이
+
+){
+
+    public static Reply from(ReplyEntity replyEntity){
+
+        // TODO user.from와 post.from이 왜 필요했더라??
+        return new Reply(replyEntity.getReplyId(), replyEntity.getBody(), User.from(replyEntity.getUser()),
+                Post.from(replyEntity.getPost()),replyEntity.getCreatedDateTime(),
+                replyEntity.getUpdatedDateTime(),replyEntity.getDeletedDateTime());
     }
 
 }
-
-//
-//public class Post {
-//
-//    private Long postId;
-//    private String body;
-//    private ZonedDateTime createdDateTime;
-//
-//
-//    public Post(Long postId, String body, ZonedDateTime createdDateTime) {
-//        this.postId = postId;
-//        this.body = body;
-//        this.createdDateTime = createdDateTime;
-//    }
-//
-//
-//    public Long getPostId() {
-//        return postId;
-//    }
-//
-//    public void setPostId(Long postId) {
-//        this.postId = postId;
-//    }
-//
-//    public String getBody() {
-//        return body;
-//    }
-//
-//    public void setBody(String body) {
-//        this.body = body;
-//    }
-//
-//    public ZonedDateTime getCreatedDateTime() {
-//        return createdDateTime;
-//    }
-//
-//    public void setCreatedDateTime(ZonedDateTime createdDateTime) {
-//        this.createdDateTime = createdDateTime;
-//    }
-//
-//
-//
-//    //TODO 아래 세개의 메서드를 쓰는 이유?
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//        Post post = (Post) o;
-//        return Objects.equals(postId, post.postId)
-//                && Objects.equals(body, post.body)
-//                && Objects.equals(createdDateTime, post.createdDateTime);
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(postId, body, createdDateTime);
-//    }
-//
-//    @Override
-//    public String toString() {
-//        return "Post{" +
-//                "postId=" + postId +
-//                ", body='" + body + '\'' +
-//                ", createdDateTime=" + createdDateTime +
-//                '}';
-//    }
-//}

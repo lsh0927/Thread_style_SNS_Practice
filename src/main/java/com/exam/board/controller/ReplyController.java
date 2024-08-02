@@ -1,10 +1,14 @@
 package com.exam.board.controller;
+
 import com.exam.board.model.entity.UserEntity;
 import com.exam.board.model.post.Post;
-
 import com.exam.board.model.post.PostPatchRequestBody;
 import com.exam.board.model.post.PostPostRequestBody;
+import com.exam.board.model.reply.Reply;
+import com.exam.board.model.reply.ReplyPatchRequestBody;
+import com.exam.board.model.reply.ReplyPostRequestBody;
 import com.exam.board.service.PostService;
+import com.exam.board.service.ReplyService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,84 +19,65 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/posts")
+@RequestMapping("/api/v1/posts/{postId}/replies")
 
-public class PostController {
+public class ReplyController {
 
-    private static final Logger  logger= LoggerFactory.getLogger(PostController.class);
 
     @Autowired
-    private PostService postService;
+    private ReplyService replyService;
 
    @GetMapping()
-   public ResponseEntity<List<Post>> getPosts(){
+   public ResponseEntity<List<Reply>> getRepliesByPostId(
+           @PathVariable Long postId
+   ){
 
-       logger.info("GET /api/v1/posts");
-       List<Post> posts= postService.getPosts();
+       var replies= replyService.getRepliesByPostId(postId);
 
+       return ResponseEntity.ok(replies);
 
-       return ResponseEntity.ok(posts);
        //JSON으로 응답
    }
 
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostByPostId(
-            @PathVariable Long postId
-    ){
-
-        logger.info("GET /api/v1/posts{}",postId);
-
-        var post =
-              postService.getPostByPostId(postId);
-
-//        return matchingPost.map(ResponseEntity::ok)
-//                .orElseGet(()-> ResponseEntity.notFound().build());
-
-        return ResponseEntity.ok(post);
-        //훨씬더 간결해짐
-        //JSON으로 응답
-    }
-
 
     @PostMapping()
-    public ResponseEntity<Post> createPost(
-            @RequestBody PostPostRequestBody postPostRequestBody,
+    public ResponseEntity<Reply> createReply(
+            @PathVariable Long postId,
+            @RequestBody ReplyPostRequestBody replyPostRequestBody,
             Authentication authentication
     ){
-        logger.info("Post /api/v1/posts{}");
 
         //userentity로 변환
-       Post post= postService.createPost(postPostRequestBody, (UserEntity) authentication.getPrincipal());
+       var reply =replyService.createReply(postId,replyPostRequestBody,(UserEntity) authentication.getPrincipal());
 
-       return ResponseEntity.ok(post);
+       return ResponseEntity.ok(reply);
 
 
     }
 
 
-
-    @PatchMapping("/{postId}")
-    public ResponseEntity<Post> updatePost(
+    @PatchMapping("/{replyId}")
+    public ResponseEntity<Reply> updateReply(
             @PathVariable Long postId,
-            @RequestBody PostPatchRequestBody postPatchRequestBody,
+            @PathVariable Long replyId,
+            @RequestBody ReplyPatchRequestBody replyPatchRequestBody,
             Authentication authentication
     ){
-        logger.info("PATCH /api/v1/posts{}",postId);
 
-       var post= postService.updatePost(postId,postPatchRequestBody,(UserEntity) authentication.getPrincipal());
-       return ResponseEntity.ok(post);
+       var reply= replyService.updateReply(postId,replyId,replyPatchRequestBody,(UserEntity) authentication.getPrincipal());
+       return ResponseEntity.ok(reply);
     }
 
 
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(
+    @DeleteMapping("/{replyId}")
+    public ResponseEntity<Void> deleteReply(
             @PathVariable Long postId,
+            @PathVariable Long replyId,
             Authentication authentication
     ){
-        logger.info("DELETE /api/v1/posts{}",postId);
 
-       postService.deletePost(postId,(UserEntity) authentication.getPrincipal());
+       replyService.deleteReply(postId,replyId,(UserEntity) authentication.getPrincipal());
      //  return ResponseEntity.ok(null);
         return ResponseEntity.noContent().build();
     }

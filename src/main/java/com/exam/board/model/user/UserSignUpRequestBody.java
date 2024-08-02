@@ -1,8 +1,11 @@
-package com.exam.board.model;
+package com.exam.board.model.user;
 
-import java.util.Objects;
+import jakarta.validation.constraints.NotEmpty;
 
-public record PostPostRequestBody(String body) {
+public record UserSignUpRequestBody(
+       @NotEmpty String username,
+       @NotEmpty String password
+) {
 
 
 }

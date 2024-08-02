@@ -10,63 +10,33 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "Reply",
-        indexes = {@Index(name = "reply_userid_idx", columnList = "userid"),
-                   @Index(name = "reply_postid_idx", columnList = "postid")
+        name = "\"like\"",
+        indexes = {@Index(name = "like_userid_postid_idx", columnList = "userid, postid", unique = true)
+//                   @Index(name = "reply_postid_idx", columnList = "postid")
         }
 )
 
-@SQLDelete(sql = "UPDATE \"reply\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE replyㅑㅇ = ?")
-// Deprecated in Hibernate 6.3
-// @Where(clause = "deletedDateTime IS NULL")
-
-@SQLRestriction("deleteddatetime IS NULL")
-public class ReplyEntity {
+public class LikeEntity {
 
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long replyId;
+    private Long likeId;
 
-
-    @Column(nullable = false)
-    private String body;
-
+    //좋아요 시간순 정렬등을 위함
     @Column
     private ZonedDateTime createdDateTime;
 
-    @Column
-    private ZonedDateTime updatedDateTime;
 
-    @Column
-    private ZonedDateTime deletedDateTime;
 
-    //연관관계 매핑
+    //좋아요를 표현하는 userid,postid는 유니크한 값, 실수로라도 좋아요가 2개이상 생성되면 안됨
     @ManyToOne
     @JoinColumn(name = "userid")
     private UserEntity user;
 
 
-    //연관관계 매핑
     @ManyToOne
     @JoinColumn(name = "postid")
     private PostEntity post;
 
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
 
     public ZonedDateTime getCreatedDateTime() {
         return createdDateTime;
@@ -76,21 +46,12 @@ public class ReplyEntity {
         this.createdDateTime = createdDateTime;
     }
 
-    public ZonedDateTime getDeletedDateTime() {
-        return deletedDateTime;
+    public Long getLikeId() {
+        return likeId;
     }
 
-    public void setDeletedDateTime(ZonedDateTime deletedDateTime) {
-        this.deletedDateTime = deletedDateTime;
-    }
-
-
-    public ZonedDateTime getUpdatedDateTime() {
-        return updatedDateTime;
-    }
-
-    public void setUpdatedDateTime(ZonedDateTime updatedDateTime) {
-        this.updatedDateTime = updatedDateTime;
+    public void setLikeId(Long likeId) {
+        this.likeId = likeId;
     }
 
     public PostEntity getPost() {
@@ -101,48 +62,42 @@ public class ReplyEntity {
         this.post = post;
     }
 
-    public Long getReplyId() {
-        return replyId;
+    public UserEntity getUser() {
+        return user;
     }
 
-    public void setReplyId(Long replyId) {
-        this.replyId = replyId;
+    public void setUser(UserEntity user) {
+        this.user = user;
     }
 
     @Override
     public boolean equals(Object o) {
+
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReplyEntity reply = (ReplyEntity) o;
-        return Objects.equals(replyId, reply.replyId) && Objects.equals(body, reply.body) && Objects.equals(createdDateTime, reply.createdDateTime) && Objects.equals(updatedDateTime, reply.updatedDateTime) && Objects.equals(deletedDateTime, reply.deletedDateTime) && Objects.equals(user, reply.user) && Objects.equals(post, reply.post);
+        LikeEntity that = (LikeEntity) o;
+        return Objects.equals(likeId, that.likeId) && Objects.equals(createdDateTime, that.createdDateTime) && Objects.equals(user, that.user) && Objects.equals(post, that.post);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(replyId, body, createdDateTime, updatedDateTime, deletedDateTime, user, post);
+        return Objects.hash(likeId, createdDateTime, user, post);
     }
 
-    public static ReplyEntity of(
-            String body,
+    public static LikeEntity of(
             UserEntity user,
             PostEntity post
     ){
-        var reply= new ReplyEntity();
-        reply.setBody(body);
-        reply.setUser(user);
-        reply.setPost(post);
-        return reply;
+        var like= new LikeEntity();
+        like.setUser(user);
+        like.setPost(post);
+        return like;
     }
 
     @PrePersist
     private void prePersist(){
         this.createdDateTime=ZonedDateTime.now();
-        this.updatedDateTime=this.createdDateTime;
     }
 
-    //수정 직전에 편리하게 기능 추가 가능
-    @PreUpdate
-    private void preUpdate(){
-         this.updatedDateTime=ZonedDateTime.now();
-    }
+
 }

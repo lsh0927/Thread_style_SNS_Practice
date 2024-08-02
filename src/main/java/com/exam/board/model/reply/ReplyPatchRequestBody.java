@@ -1,6 +1,6 @@
-package com.exam.board.model.post;
+package com.exam.board.model.reply;
 
-public record PostPatchRequestBody(String body) {
+public record ReplyPatchRequestBody(String body) {
 
 
 }

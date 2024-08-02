@@ -1,6 +1,4 @@
-package com.exam.board.model;
-
-import java.util.Objects;
+package com.exam.board.model.post;
 
 public record PostPostRequestBody(String body) {
 

@@ -1,23 +1,37 @@
-package com.exam.board.model;
+package com.exam.board.model.post;
 
 
 import com.exam.board.model.entity.PostEntity;
+import com.exam.board.model.user.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.ZonedDateTime;
-import java.util.Objects;
 
 //여기 값이 널이 아닌 것만
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public  record Post(Long postId,
                     String body,
+                    User user,
+                    Long repliesCount,
+                    Long likesCount,
                     ZonedDateTime createdDateTime,
                     ZonedDateTime updatedDateTime,
-                    ZonedDateTime deletedDateTime){
+                    ZonedDateTime deletedDateTime,
+                    Boolean isLiking
+                    )
+{
 
     public static Post from(PostEntity postEntity){
-        return new Post(postEntity.getPostId(), postEntity.getBody(), postEntity.getCreatedDateTime(),
-                postEntity.getUpdatedDateTime(),postEntity.getDeletedDateTime());
+        return new Post(postEntity.getPostId(), postEntity.getBody(), User.from(postEntity.getUser()), postEntity.getRepliesCount(),
+                postEntity.getLikesCount(),
+                postEntity.getCreatedDateTime(),
+                postEntity.getUpdatedDateTime(),postEntity.getDeletedDateTime(), null);
+    }
+    public static Post from(PostEntity postEntity, boolean isLiking){
+        return new Post(postEntity.getPostId(), postEntity.getBody(), User.from(postEntity.getUser()), postEntity.getRepliesCount(),
+                postEntity.getLikesCount(),
+                postEntity.getCreatedDateTime(),
+                postEntity.getUpdatedDateTime(),postEntity.getDeletedDateTime(), isLiking);
     }
 
 }

@@ -10,19 +10,21 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "post",
-        indexes = {@Index(name = "post_userid_idx", columnList = "userid")}
+        name = "Reply",
+        indexes = {@Index(name = "reply_userid_idx", columnList = "userid"),
+                   @Index(name = "reply_postid_idx", columnList = "postid")
+        }
 )
 
-@SQLDelete(sql = "UPDATE \"post\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE postid = ?")
+@SQLDelete(sql = "UPDATE \"reply\" SET deleteddatetime = CURRENT_TIMESTAMP WHERE replyㅑㅇ = ?")
 // Deprecated in Hibernate 6.3
 // @Where(clause = "deletedDateTime IS NULL")
 
 @SQLRestriction("deleteddatetime IS NULL")
-public class PostEntity {
+public class ReplyEntity {
 
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;
+    private Long replyId;
 
 
     @Column(nullable = false)
@@ -41,7 +43,12 @@ public class PostEntity {
     @ManyToOne
     @JoinColumn(name = "userid")
     private UserEntity user;
-    //post를 통해 유저 조회, 유저의 게시물 조회 쿼리 성능 향상을 위한 어노테이션 필요
+
+
+    //연관관계 매핑
+    @ManyToOne
+    @JoinColumn(name = "postid")
+    private PostEntity post;
 
 
     public UserEntity getUser() {
@@ -77,13 +84,6 @@ public class PostEntity {
         this.deletedDateTime = deletedDateTime;
     }
 
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
 
     public ZonedDateTime getUpdatedDateTime() {
         return updatedDateTime;
@@ -93,28 +93,45 @@ public class PostEntity {
         this.updatedDateTime = updatedDateTime;
     }
 
+    public PostEntity getPost() {
+        return post;
+    }
+
+    public void setPost(PostEntity post) {
+        this.post = post;
+    }
+
+    public Long getReplyId() {
+        return replyId;
+    }
+
+    public void setReplyId(Long replyId) {
+        this.replyId = replyId;
+    }
+
     @Override
     public boolean equals(Object o) {
-
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        PostEntity that = (PostEntity) o;
-        return Objects.equals(postId, that.postId) && Objects.equals(body, that.body) && Objects.equals(createdDateTime, that.createdDateTime) && Objects.equals(updatedDateTime, that.updatedDateTime) && Objects.equals(deletedDateTime, that.deletedDateTime) && Objects.equals(user, that.user);
+        ReplyEntity reply = (ReplyEntity) o;
+        return Objects.equals(replyId, reply.replyId) && Objects.equals(body, reply.body) && Objects.equals(createdDateTime, reply.createdDateTime) && Objects.equals(updatedDateTime, reply.updatedDateTime) && Objects.equals(deletedDateTime, reply.deletedDateTime) && Objects.equals(user, reply.user) && Objects.equals(post, reply.post);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(postId, body, createdDateTime, updatedDateTime, deletedDateTime, user);
+        return Objects.hash(replyId, body, createdDateTime, updatedDateTime, deletedDateTime, user, post);
     }
 
-    public static PostEntity of(
+    public static ReplyEntity of(
             String body,
-            UserEntity user
+            UserEntity user,
+            PostEntity post
     ){
-        var post= new PostEntity();
-        post.setBody(body);
-        post.setUser(user);
-        return post;
+        var reply= new ReplyEntity();
+        reply.setBody(body);
+        reply.setUser(user);
+        reply.setPost(post);
+        return reply;
     }
 
     @PrePersist

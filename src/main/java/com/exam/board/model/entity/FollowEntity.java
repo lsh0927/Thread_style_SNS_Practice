@@ -2,24 +2,22 @@ package com.exam.board.model.entity;
 
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
 
 @Entity
 @Table(
-        name = "\"like\"",
-        indexes = {@Index(name = "reply_userid_postid_idx", columnList = "userid, postid", unique = true)
+        name = "\"follow\"",
+        indexes = {@Index(name = "follow_follower_following_idx", columnList = "follower, following", unique = true)
 //                   @Index(name = "reply_postid_idx", columnList = "postid")
         }
 )
 
-public class LikeEntity {
+public class FollowEntity {
 
     @Id@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long likeId;
+    private Long followId;
 
     //좋아요 시간순 정렬등을 위함
     @Column
@@ -27,18 +25,17 @@ public class LikeEntity {
 
 
 
-    //좋아요를 표현하는 userid,postid는 유니크한 값, 실수로라도 좋아요가 2개이상 생성되면 안됨
     @ManyToOne
-    @JoinColumn(name = "userid")
-    private UserEntity user;
+    @JoinColumn(name = "follower")
+    private UserEntity follower;
 
 
     @ManyToOne
-    @JoinColumn(name = "postid")
-    private PostEntity post;
-
+    @JoinColumn(name = "following")
+    private UserEntity following;
 
     public ZonedDateTime getCreatedDateTime() {
+
         return createdDateTime;
     }
 
@@ -46,52 +43,53 @@ public class LikeEntity {
         this.createdDateTime = createdDateTime;
     }
 
-    public Long getLikeId() {
-        return likeId;
+    public UserEntity getFollower() {
+        return follower;
     }
 
-    public void setLikeId(Long likeId) {
-        this.likeId = likeId;
+    public void setFollower(UserEntity follower) {
+        this.follower = follower;
     }
 
-    public PostEntity getPost() {
-        return post;
+    public Long getFollowId() {
+        return followId;
     }
 
-    public void setPost(PostEntity post) {
-        this.post = post;
+    public void setFollowId(Long followId) {
+        this.followId = followId;
     }
 
-    public UserEntity getUser() {
-        return user;
+    public UserEntity getFollowing() {
+        return following;
     }
 
-    public void setUser(UserEntity user) {
-        this.user = user;
+    public void setFollowing(UserEntity following) {
+        this.following = following;
     }
+
 
     @Override
     public boolean equals(Object o) {
 
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        LikeEntity that = (LikeEntity) o;
-        return Objects.equals(likeId, that.likeId) && Objects.equals(createdDateTime, that.createdDateTime) && Objects.equals(user, that.user) && Objects.equals(post, that.post);
+        FollowEntity that = (FollowEntity) o;
+        return Objects.equals(followId, that.followId) && Objects.equals(createdDateTime, that.createdDateTime) && Objects.equals(follower, that.follower) && Objects.equals(following, that.following);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(likeId, createdDateTime, user, post);
+        return Objects.hash(followId, createdDateTime, follower, following);
     }
 
-    public static LikeEntity of(
-            UserEntity user,
-            PostEntity post
+    public static FollowEntity of(
+            UserEntity follower,
+            UserEntity following
     ){
-        var like= new LikeEntity();
-        like.setUser(user);
-        like.setPost(post);
-        return like;
+        var follow= new FollowEntity();
+        follow.setFollower(follower);
+        follow.setFollowing(following);
+        return follow;
     }
 
     @PrePersist
