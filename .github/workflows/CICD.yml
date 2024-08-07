@@ -34,9 +34,7 @@ jobs:
 
       - name: Build Docker
         run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/liveserver .
-      
-      # - name: Build Docker
-      #   run: docker build -f docker/Dockerfile --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/liveserver .
+
 
 
       - name: Push Docker
