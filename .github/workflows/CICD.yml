@@ -1,13 +1,10 @@
-name: CICD
+name: CI/CD
 
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-permissions:
-  contents: read
 
 jobs:
   build:
@@ -35,11 +32,9 @@ jobs:
       - name: Build Docker
         run: docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/liveserver .
 
-
-
       - name: Push Docker
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/liveserver:latest
-        
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
