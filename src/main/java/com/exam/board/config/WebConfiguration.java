@@ -50,6 +50,7 @@ public class WebConfiguration {
                 .authorizeHttpRequests(
                         (requests) ->
                                 requests
+                                        .requestMatchers("/hc","/env").permitAll()
                                         .requestMatchers(HttpMethod.POST, "/api/*/users", "/api/*/users/authenticate")
                                         .permitAll()
                                         .anyRequest()
