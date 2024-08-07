@@ -21,7 +21,7 @@ spring:
 
 
 server:
-  port: 8080
+  port: 8880
   serverAddress: localhost
 
 serverName: local_server
@@ -37,8 +37,8 @@ spring:
 
 
 server:
-  port: 8080
-  serverAddress: 15.165.84.138
+  port: 8880
+  serverAddress: 52.79.148.30
 
 serverName: blue_server
 
@@ -52,8 +52,8 @@ spring:
 
 
 server:
-  port: 8081
-  serverAddress: 15.165.84.138
+  port: 8881
+  serverAddress: 52.79.148.30
 
 serverName: green_server
 ---
