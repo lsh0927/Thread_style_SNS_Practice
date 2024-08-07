@@ -2,9 +2,9 @@ spring:
   profiles:
     active: local
     group:
-      local: local, common, secret
-      blue: blue, common, secret
-      green: green, common, secret
+      local: local, common
+      blue: blue, common
+      green: green, common
 
 
 server:
@@ -61,6 +61,9 @@ serverName: green_server
 
 
 spring:
+  config:
+    activate:
+      on-profile: common
   jpa:
     database: postgresql
     show-sql: true
@@ -89,6 +92,3 @@ spring:
   security:
     user.name: board-admin
     user.password: board-admin-password
-  config:
-    activate:
-      on-profile: common
