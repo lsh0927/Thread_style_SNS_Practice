@@ -6,59 +6,46 @@ spring:
       blue: blue, common
       green: green, common
 
-
 server:
   env: blue
 
-
 ---
-
 
 spring:
   config:
     activate:
       on-profile: local
 
-
 server:
   port: 8880
   serverAddress: localhost
-
-serverName: local_server
-
+  serverName: local_server
 
 ---
-
 
 spring:
   config:
     activate:
       on-profile: blue
 
-
 server:
   port: 8880
   serverAddress: 52.79.148.30
-
-serverName: blue_server
+  serverName: blue_server
 
 ---
-
 
 spring:
   config:
     activate:
       on-profile: green
 
-
 server:
   port: 8881
   serverAddress: 52.79.148.30
+  serverName: green_server
 
-serverName: green_server
 ---
-
-
 
 spring:
   config:
@@ -75,20 +62,9 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://localhost:5432/board-db
+    url: jdbc:postgresql://postgres:5432/board-db
     username: board-master
     password: board-postgres-password
-  #logging:
-  #  level:
-  #    #TRACE<DEBUG<INFO<WARN<ERROR
-  #    root: ERROR
-  #logging:
-  #  level:
-  #    org.hibernate.type: TRACE
-  #    org.hibernate.orm.jdbc.bind: TRACE
-  #    org.hibernate.engine.transaction.internal.TransactionImpl: DEBUG
-  #    org.springframework.orm.jpa: DEBUG
-  #    org.springframework.transaction: DEBUG
   security:
     user.name: board-admin
     user.password: board-admin-password

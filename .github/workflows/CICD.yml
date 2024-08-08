@@ -43,21 +43,21 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}:${{env.CURRENT_PORT}}/env")
           echo $STATUS
           if [ $STATUS = 200 ]; then
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}:${{env.CURRENT_PORT}}/env")
           else
             CURRENT_UPSTREAM=green
           fi
           echo CURRENT_UPSTREAM=$CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
-            echo "CURRENT_PORT=8880" >> $GITHUB_ENV
-            echo "STOPPED_PORT=8881" >> $GITHUB_ENV
-            echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
-          elif [ $CURRENT_UPSTREAM = green ]; then
             echo "CURRENT_PORT=8881" >> $GITHUB_ENV
             echo "STOPPED_PORT=8880" >> $GITHUB_ENV
+            echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
+          elif [ $CURRENT_UPSTREAM = green ]; then
+            echo "CURRENT_PORT=8880" >> $GITHUB_ENV
+            echo "STOPPED_PORT=8881" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           else
             echo "error"
@@ -73,8 +73,8 @@ jobs:
           script_stop: true
           script: |
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/liveserver:latest
-            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
-      
+            sudo docker-compose -f docker-compose-common.yml -f docker-compose-${{env.TARGET_UPSTREAM}}.yml up -d
+
       - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
         with:
@@ -102,4 +102,4 @@ jobs:
           script: |
             sudo docker stop ${{env.CURRENT_UPSTREAM}}
             sudo docker rm ${{env.CURRENT_UPSTREAM}}
-
+  
