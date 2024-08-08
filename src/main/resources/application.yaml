@@ -58,7 +58,7 @@ spring:
     properties:
       hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   datasource:
-    url: jdbc:postgresql://52.79.148.30:5432/board-db
+    url: jdbc:postgresql://localhost:5432/board-db
     username: board-master
     password: board-postgres-password
   security:
