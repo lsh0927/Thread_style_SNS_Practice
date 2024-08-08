@@ -10,7 +10,6 @@ server:
   env: blue
 
 ---
-
 spring:
   config:
     activate:
@@ -22,7 +21,6 @@ server:
   serverName: local_server
 
 ---
-
 spring:
   config:
     activate:
@@ -34,7 +32,6 @@ server:
   serverName: blue_server
 
 ---
-
 spring:
   config:
     activate:
@@ -46,7 +43,6 @@ server:
   serverName: green_server
 
 ---
-
 spring:
   config:
     activate:
